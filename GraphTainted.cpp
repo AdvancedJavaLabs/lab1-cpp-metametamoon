@@ -21,10 +21,10 @@ using i64 = int64_t;
 template<typename T>
 struct safe_vector {
     std::vector<T> vec; // must have enough vec.size to store all the elements
-    std::atomic<i64> actual_size = 0;
+    i64 actual_size = 0;
 
     void push_back(T const &element) {
-        auto index = actual_size.fetch_add(1);
+        auto index = actual_size++;
         vec.at(index) = element;
     }
 };
@@ -79,7 +79,7 @@ void Graph::parallelBFS(int startVertex) {
 
         if (next_level.actual_size == 0) break;
         std::swap(current_level.vec, next_level.vec);
-        current_level.actual_size = next_level.actual_size.load();
+        current_level.actual_size = next_level.actual_size;
         next_level.actual_size = 0;
     }
 }
